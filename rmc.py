@@ -5,8 +5,11 @@ import os, sys
 import random
 
 upper_limit_gb = 3
+upper_limit_byte = upper_limit_gb * 10**9
+total_size = 0
+album_count = 0
 rootdir = '/mnt/DATA/Music/'
-
+artist_list = []
 
 def populate_album_list(path):
     full_list = []
@@ -30,10 +33,21 @@ def get_size(directory):
 al = populate_album_list(rootdir)
         
 for i in range(len(al)):
-    artist = random.choice(al)
-    al.remove(artist)
-    print('_____')
-    print(artist)
-    print(get_size(artist))
+    while total_size < upper_limit_byte:
+        artist = random.choice(al)
+        al.remove(artist)
+        artist_list.append(artist)
+
+        total_size += get_size(artist)
+        print("Total size (GB): ", total_size / 10**9)
+        album_count += 1
+        print("Album count: ", album_count)
+
+        print('_____')
+        print(artist)
+        print(get_size(artist))
 
 print(al)
+print()
+print(artist_list)
+
