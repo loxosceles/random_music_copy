@@ -5,7 +5,7 @@ import random
 from distutils.dir_util import copy_tree
 
 upper_limit_gb = 1
-upper_limit_byte = upper_limit_gb * 10**9
+upper_limit_byte = upper_limit_gb * 2**30
 total_size = 0
 album_count = 0
 rootdir = '/mnt/DATA/Music/'
@@ -59,22 +59,18 @@ if __name__ == "__main__":
         print(USAGE)
         sys.exit(1)
     else:
-        rootdir = sys.argv[1]
-        targetdir = sys.argv[2]
+        rootdir = sys.argv[1].rstrip('/') + '/'
+        targetdir = sys.argv[2].rstrip('/') + '/'
 
 al = populate_album_list(rootdir)
         
 while total_size < upper_limit_byte:
     album_fullpath = random.choice(al)
     al.remove(album_fullpath)
-    #album_list.append(album_fullpath)
-    #print(extract_band_name(album_fullpath))
-    #print("album_fullpath list: ", album_list)
-    #print(targetdir_band)
 
     print('##############################')
     total_size += get_size(album_fullpath)
-    print("Total size (GB): ", total_size / 10**9)
+    print("Total size (GB): ", total_size / 2**30)
     album_count += 1
     print("Album count: ", album_count)
     print(album_fullpath)
