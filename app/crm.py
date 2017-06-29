@@ -76,7 +76,3 @@ while total_size < upper_limit_byte:
     print(album_fullpath)
     print(get_size(album_fullpath))
     copy_albums(targetdir, album_fullpath)
-
-#print(al)
-#print()
-#print(album_list)
