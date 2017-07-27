@@ -3,9 +3,10 @@
 import os, sys
 import random
 from distutils.dir_util import copy_tree
+import argparse
 
-upper_limit_gb = 1
-upper_limit_byte = upper_limit_gb * 2**30
+
+GB_LIMIT_DEFAULT = 1
 total_size = 0
 album_count = 0
 rootdir = '/mnt/DATA/Music/'
@@ -13,13 +14,9 @@ targetdir = '/mnt/DATA/test/'
 album_list = []
 
 
-USAGE = """
-        USAGE:
-        crm SOURCE TARGET
+def gbyte_to_byte(gb):
+    return gb * 2**30
 
-        SOURCE: source directory
-        TARGET: target directory
-        """
 def populate_album_list(path):
     full_list = []
     for root, dirs, files in os.walk(rootdir):
@@ -55,24 +52,42 @@ def copy_albums(targetdir, album):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) is not 3:
-        print(USAGE)
-        sys.exit(1)
+    parser = argparse.ArgumentParser(description='program description')
+
+    # Add command line arguments, only the path is obligatory
+    parser.add_argument('-s', '--sourcedir', help='Source directory or music folder',
+            required=True)
+    parser.add_argument('-t', '--targetdir', help='Target directory or music folder of device', 
+            required=True)
+    parser.add_argument('-l', '--limit', help='Limit of data amount to be copied (in GB)')
+    
+    args = vars(parser.parse_args())
+
+    # Assign source dir
+    if args['sourcedir']:
+        rootdir = args['sourcedir'].rstrip('/') + '/'
+    # Assign targetdir
+    if args['targetdir']:
+        targetdir = args['targetdir'].rstrip('/') + '/'
+    # Define amount of data to be copied. If not given defaulting to 1GB
+    if args['limit']:
+        upper_limit_gb = int(args['limit'])
     else:
-        rootdir = sys.argv[1].rstrip('/') + '/'
-        targetdir = sys.argv[2].rstrip('/') + '/'
+        upper_limit_gb = GB_LIMIT_DEFAULT 
 
-al = populate_album_list(rootdir)
-        
-while total_size < upper_limit_byte:
-    album_fullpath = random.choice(al)
-    al.remove(album_fullpath)
+    upper_limit_byte = gbyte_to_byte(upper_limit_gb)
 
-    print('##############################')
-    total_size += get_size(album_fullpath)
-    print("Total size (GB): ", total_size / 2**30)
-    album_count += 1
-    print("Album count: ", album_count)
-    print(album_fullpath)
-    print(get_size(album_fullpath))
-    copy_albums(targetdir, album_fullpath)
+    al = populate_album_list(rootdir)
+            
+    while total_size < upper_limit_byte:
+        album_fullpath = random.choice(al)
+        al.remove(album_fullpath)
+
+        print('##############################')
+        total_size += get_size(album_fullpath)
+        print("Total size (GB): ", total_size / 2**30)
+        album_count += 1
+        print("Album count: ", album_count)
+        print(album_fullpath)
+        print(get_size(album_fullpath))
+        copy_albums(targetdir, album_fullpath)
