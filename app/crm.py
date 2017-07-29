@@ -1,18 +1,15 @@
 #!/usr/bin/env python
+
 # Draft for copy random music (CRM)
+
 import os, sys
 import random
 from distutils.dir_util import copy_tree
 import argparse
 
-
 GB_LIMIT_DEFAULT = 1
 total_size = 0
 album_count = 0
-rootdir = '/mnt/DATA/Music/'
-targetdir = '/mnt/DATA/test/'
-album_list = []
-
 
 def gbyte_to_byte(gb):
     return gb * 2**30
